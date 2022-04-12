@@ -20,6 +20,7 @@ const CustomSocketServer = require('./lib/custom-socket-server');
 const IcmpEchoLogger = require('./lib/icmp-echo-logger');
 const helper = require('./lib/helper');
 const tcp_ports = require('./lib/tcp-ports');
+const { emit } = require('process');
 
 let data = [];
 let monthly_stats;
@@ -77,7 +78,7 @@ app.use((req, res, next) => {
 	if (req.hostname !== config.hostname || (req.protocol === 'http' && config.https_only)) {
 		if (req.hostname) item.request = req.method + ' ' + req.protocol + '://' + req.hostname + req.originalUrl;
 		emitData(item);
-		res.redirect((config.https_only ? 'https' : 'http') + '://' + config.hostname + req.originalUrl);
+		console.log(req.originalUrl)
 	}
 	else {
 		emitData(item);
@@ -85,6 +86,19 @@ app.use((req, res, next) => {
 	}
 });
 app.use(express.static('static'));
+
+app.put('/feed', (req, res) => {
+	// const {ip,service,request,http_request_path, request_headers} = req.body
+	let payload = {
+		'ip': 'ip',
+		'service': 'service',
+		'request': 'request',
+		'http_request_path': 'http_request_path',
+		'request_headers': 'request_headers'
+	}
+	emitData(payload)
+})
+
 app.get('/', (req, res) => {
 	res.sendFile('view/index.html' , {root: __dirname, lastModified: false, headers: {'Cache-Control': 'no-cache, no-store, must-revalidate', 'Expires': '0'}});
 });
