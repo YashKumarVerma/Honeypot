@@ -88,13 +88,13 @@ app.use((req, res, next) => {
 app.use(express.static('static'));
 
 app.put('/feed', (req, res) => {
-	// const {ip,service,request,http_request_path, request_headers} = req.body
+	const {ip,service,request,http_request_path, request_headers} = req.body
 	let payload = {
-		'ip': 'ip',
-		'service': 'service',
-		'request': 'request',
-		'http_request_path': 'http_request_path',
-		'request_headers': 'request_headers'
+		'ip': ip,
+		'service': service,
+		'request': request,
+		'http_request_path': http_request_path,
+		'request_headers': request_headers
 	}
 	emitData(payload)
 })
